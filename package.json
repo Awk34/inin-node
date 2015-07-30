@@ -1,0 +1,20 @@
+{
+  "name": "inin",
+  "version": "0.0.1",
+  "description": "Interactive Intelligence Hackathon NPM Package",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "keywords": [
+    "inin",
+    "interactive",
+    "intelligence",
+    "hackathon"
+  ],
+  "author": "Andrew Koroluk <andrew.koroluk@inin.com> (http://andrewkoroluk.com/)",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "babel-core": "^5.8.19"
+  }
+}
