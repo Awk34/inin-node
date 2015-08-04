@@ -4,4 +4,4 @@
 require('babel-core/register');
 
 // Export the application
-//exports = module.exports = require('./app');
+module.exports = require('./lib/inin');
