@@ -9,6 +9,6 @@ if(env === 'development') {
     // Export the application
     exports = module.exports = require('src/inin');
 } else {
-	// Export the application
-	exports = module.exports = require('dist/inin');
+    // Export the application
+    exports = module.exports = require('dist/inin');
 }
