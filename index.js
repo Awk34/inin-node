@@ -1,7 +1,14 @@
 'use strict';
 
-// Register the Babel require hook
-require('babel-core/register');
+var env = process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
-// Export the application
-module.exports = require('./lib/inin');
+if(env === 'development') {
+    // Register the Babel require hook
+    require('babel/register');
+    
+    // Export the application
+    exports = module.exports = require('src/inin');
+} else {
+	// Export the application
+	exports = module.exports = require('dist/inin');
+}
