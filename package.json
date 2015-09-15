@@ -13,6 +13,7 @@
     "hackathon"
   ],
   "author": "Andrew Koroluk <andrew.koroluk@inin.com> (http://andrewkoroluk.com/)",
+  "repository": "git@github.com:Awk34/inin-node.git",
   "license": "GPL-3.0",
   "dependencies": {
     "core-decorators": "^0.2.0",
