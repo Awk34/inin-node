@@ -7,8 +7,8 @@ if(env === 'development') {
     require('babel/register');
     
     // Export the application
-    exports = module.exports = require('src/inin');
+    exports = module.exports = require('./src/inin');
 } else {
     // Export the application
-    exports = module.exports = require('dist/inin');
+    exports = module.exports = require('./dist/inin');
 }
