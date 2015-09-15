@@ -4,7 +4,8 @@
   "description": "Interactive Intelligence Hackathon NPM Package",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "prepublish": "gulp babel"
   },
   "keywords": [
     "inin",
