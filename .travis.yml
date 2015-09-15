@@ -3,6 +3,6 @@ language: node_js
 node_js:
   - '0.12'
   - '4.0.0'
-  cache:
+cache:
   directories:
     - node_modules
