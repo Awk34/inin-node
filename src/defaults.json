@@ -1,0 +1,17 @@
+{
+    "key": null,
+    "secret": null,
+
+    "headers": {
+        "Accept": "*/*",
+        "Connection": "close",
+        "User-Agent": "inin-node/"
+    },
+
+    "rest_base": "https://public-api.us-east-1.ininsca.com/api/v1",
+
+    "secure": false,
+    "cookie": "ininauth",
+    "cookie_options": {},
+    "cookie_secret": null
+}
