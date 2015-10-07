@@ -24,7 +24,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('test', ['build'], function() {
-    return gulp.src(['test/*.js'])
+    return gulp.src(['test/*.js', '!test/index.js'], {read: false})
         .pipe(mocha({ reporter: 'spec' }))
         .on('error', err => console.log(err.stack));
 });
