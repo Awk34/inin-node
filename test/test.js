@@ -1,15 +1,16 @@
 'use strict';
-import * as inin from '../';
+import inin from '../';
+import _request from 'request';
+import bluebird from 'bluebird';
 
-async function getApiDocs() {
-    let result = await inin.apiDocs();
-    console.log(result.apiVersion);
-    console.log(result.swaggerVersion);
-    console.log(result.authorization);
-    console.log(result.info);
-    console.log(result.apis);
-    return result;
-}
-getApiDocs();
-//console.log(inin.getApiDocs());
-//inin.getApiDocs().then(console.log.bind(console));
+const request = bluebird.promisify(_request);
+
+inin.login('testhacker@example.com', 'test1234')
+    .then(() => {
+        console.log(inin.configure());
+        inin.getThing()
+            .then(([inc, body]) => {
+                console.log(body);
+            });
+    })
+    .catch(console.log.bind(console));
