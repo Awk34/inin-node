@@ -3,7 +3,6 @@ import gulp from 'gulp';
 import babel from 'gulp-babel';
 import mocha from 'gulp-mocha';
 import runSequence from 'run-sequence';
-import copy from 'gulp-copy';
 
 gulp.task('build', cb => {
     runSequence(['babel', 'copy:dist'], cb);
