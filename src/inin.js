@@ -147,7 +147,12 @@ export function createPhone() {
 }
 
 export function getThing() {
-    return request.defaults({jar: config.jar, headers: config.headers})('https://apps.ininsca.com/platform/api/v1/billing/invoices');
+    return request('https://apps.ininsca.com/platform/api/v1/authorization/roles');
+}
+
+export function getUser(userId = 'me') {
+    return request(`https://apps.ininsca.com/platform/api/v1/users/${userId}`);
+}
 
 /**
  * Make a request with the SDK's current instance of request
