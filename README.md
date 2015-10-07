@@ -18,4 +18,4 @@ inin.login('user@example.com', 'password').then(function() {
 
 `npm install`
 
-To run tests, `NODE_ENV=development node test` from project root
+To run tests, `gulp test` from project root
