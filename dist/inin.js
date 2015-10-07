@@ -33,7 +33,7 @@ var _defaultsJson = require('./defaults.json');
 
 var _defaultsJson2 = _interopRequireDefault(_defaultsJson);
 
-var VERSION = '0.0.1';
+var VERSION = require('../package.json').version;
 
 exports.VERSION = VERSION;
 

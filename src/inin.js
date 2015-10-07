@@ -1,6 +1,6 @@
 'use strict';
 
-export const VERSION = '0.0.1';
+export const VERSION = require('../package.json').version;
 
 import _ from 'lodash';
 import bluebird from 'bluebird';
