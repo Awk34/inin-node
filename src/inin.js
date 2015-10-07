@@ -9,6 +9,10 @@ import defaults from './defaults.json';
 
 let request = bluebird.promisify(_request);
 
+if(process.env.NODE_ENV !== 'development') {
+    console.log = function() {};
+}
+
 let config = defaults;
 
 export function configure(options) {
