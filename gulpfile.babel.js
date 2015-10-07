@@ -15,7 +15,9 @@ gulp.task('copy:dist', function() {
 
 gulp.task('babel', function() {
     return gulp.src('src/*.js')
-        .pipe(babel())
+        .pipe(babel({
+            optional: ['runtime']
+        }))
         .pipe(gulp.dest('dist'));
 });
 

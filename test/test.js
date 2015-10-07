@@ -1,5 +1,5 @@
 'use strict';
-import inin from '../';
+import inin from '../src/inin';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _request from 'request';
