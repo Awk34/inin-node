@@ -11,6 +11,8 @@ exports.login = login;
 exports.createUser = createUser;
 exports.createPhone = createPhone;
 exports.getThing = getThing;
+exports.getUser = getUser;
+exports.makeRequest = makeRequest;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -35,6 +37,15 @@ var VERSION = '0.0.1';
 exports.VERSION = VERSION;
 
 var request = _bluebird2['default'].promisify(_request3['default']);
+
+var log = function log() {
+    console.log.apply(console, arguments).bind(console);
+};
+if (!process.env.DEBUG) {
+    log.debug = function () {};
+} else {
+    log.debug = console.log;
+}
 
 var config = _defaultsJson2['default'];
 
@@ -98,6 +109,9 @@ function createSession() {
         var inc = _ref2[0];
         var body = _ref2[1];
 
+        log.debug('===' + inc.statusCode + '===');
+        log.debug(inc.headers);
+        log.debug(body);
         return Promise.resolve(body);
     });
 }
@@ -127,8 +141,8 @@ function login(username, password) {
         var inc = _ref32[0];
         var body = _ref32[1];
 
-        //console.log('===' + inc.statusCode + '===');
-        //console.log(inc.headers);
+        log.debug('===' + inc.statusCode + '===');
+        log.debug(inc.headers);
         var authSession = (0, _lodash2['default'])(inc.headers['set-cookie']).filter(function (cookieString) {
             return cookieString.indexOf('ININ-Auth-Api') >= 0;
         }).first();
@@ -184,12 +198,30 @@ function setRole(userId, roleId) {
 function createPhone() {}
 
 function getThing() {
-    return request.defaults({ jar: config.jar, headers: config.headers })('https://apps.ininsca.com/platform/api/v1/billing/invoices');
+    return request('https://apps.ininsca.com/platform/api/v1/authorization/roles');
+}
+
+function getUser() {
+    var userId = arguments.length <= 0 || arguments[0] === undefined ? 'me' : arguments[0];
+
+    return request('https://apps.ininsca.com/platform/api/v1/users/' + userId);
+}
+
+/**
+ * Make a request with the SDK's current instance of request
+ * @param {Object} options - options passed to RequestJS
+ */
+
+function makeRequest() {
+    var options = arguments.length <= 0 || arguments[0] === undefined ? { url: 'https://apps.ininsca.com/platform/api/v1/users/me' } : arguments[0];
+
+    return request(options);
 }
 
 exports['default'] = {
-    config: config,
+    VERSION: VERSION,
     configure: configure,
     login: login,
-    getThing: getThing
+    getThing: getThing,
+    makeRequest: makeRequest
 };
