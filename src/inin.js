@@ -148,11 +148,19 @@ export function createPhone() {
 
 export function getThing() {
     return request.defaults({jar: config.jar, headers: config.headers})('https://apps.ininsca.com/platform/api/v1/billing/invoices');
+
+/**
+ * Make a request with the SDK's current instance of request
+ * @param {Object} options - options passed to RequestJS
+ */
+export function makeRequest(options = {url: 'https://apps.ininsca.com/platform/api/v1/users/me'}) {
+    return request(options);
 }
 
 export default {
     config,
     configure,
     login,
-    getThing
+    getThing,
+    makeRequest
 }
