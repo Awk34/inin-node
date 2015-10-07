@@ -21,6 +21,7 @@ gulp.task('babel', function() {
 
 gulp.task('watch', function() {
     gulp.watch('src/*.js', ['babel']);
+    gulp.watch('src/*{,!.js}', ['copy:dist']);
 });
 
 gulp.task('test', ['build'], function() {
