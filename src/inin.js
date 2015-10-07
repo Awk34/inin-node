@@ -158,7 +158,7 @@ export function makeRequest(options = {url: 'https://apps.ininsca.com/platform/a
 }
 
 export default {
-    config,
+    VERSION,
     configure,
     login,
     getThing,
