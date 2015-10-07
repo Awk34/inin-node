@@ -5,7 +5,10 @@ import bluebird from 'bluebird';
 
 const request = bluebird.promisify(_request);
 
-inin.login('testhacker@example.com', 'test1234')
+const TEST_USERNAME = process.env.TEST_USERNAME || 'testhacker@example.com';
+const TEST_PASSWORD = process.env.TEST_PASSWORD || 'test1234';
+
+inin.login(TEST_USERNAME, TEST_PASSWORD)
     .then(() => {
         console.log(inin.configure());
         inin.getThing()
