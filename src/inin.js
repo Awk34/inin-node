@@ -9,8 +9,13 @@ import defaults from './defaults.json';
 
 let request = bluebird.promisify(_request);
 
-if(process.env.NODE_ENV !== 'development') {
-    console.log = function() {};
+let log = function(...args) {
+    console.log(...args).bind(console);
+};
+if(!process.env.DEBUG) {
+    log.debug = function () {};
+} else {
+    log.debug = console.log;
 }
 
 let config = defaults;
@@ -69,6 +74,9 @@ function createSession(options = {}) {
 
     return request(reqConfig)
         .then(([inc, body]) => {
+            log.debug('===' + inc.statusCode + '===');
+            log.debug(inc.headers);
+            log.debug(body);
             return Promise.resolve(body);
         });
 }
@@ -91,8 +99,8 @@ export function login(username, password, options = {}) {
         json: true
     })
         .then(([inc, body]) => {
-            //console.log('===' + inc.statusCode + '===');
-            //console.log(inc.headers);
+            log.debug('===' + inc.statusCode + '===');
+            log.debug(inc.headers);
             let authSession = _(inc.headers['set-cookie'])
                 .filter(cookieString => cookieString.indexOf('ININ-Auth-Api') >= 0)
                 .first();
