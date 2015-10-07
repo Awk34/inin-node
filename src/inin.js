@@ -7,13 +7,14 @@ import bluebird from 'bluebird';
 import _request from 'request';
 import defaults from './defaults.json';
 
-const request = bluebird.promisify(_request);
+let request = bluebird.promisify(_request);
 
 let config = defaults;
 
 export function configure(options) {
     if(!options) return config;
     config = _.assign(defaults, options);
+    request = request.defaults({headers: config.headers, jar: config.jar});
     return config;
 }
 configure({headers: {userAgent: "inin-node/" + VERSION}});
