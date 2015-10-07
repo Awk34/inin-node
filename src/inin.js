@@ -111,6 +111,37 @@ export function login(username, password, options = {}) {
         });
 }
 
+/**
+ *
+ */
+export function createUser() {
+
+}
+
+/**
+ * Set a role of a given user
+ * @param userId
+ * @param roleId
+ */
+function setRole(userId, roleId) {
+    return request({
+        method: 'PUT',
+        url: `https://apps.ininsca.com/platform/api/v1/authorization/users/${userId}/roles`,
+        body: [roleId],
+        json: true
+    })
+        .then(([inc, body]) => {
+            return Promise.resolve(body);
+        });
+}
+
+/**
+ *
+ */
+export function createPhone() {
+
+}
+
 export function getThing() {
     return request.defaults({jar: config.jar, headers: config.headers})('https://apps.ininsca.com/platform/api/v1/billing/invoices');
 }
