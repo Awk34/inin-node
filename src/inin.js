@@ -33,13 +33,50 @@ function parseCookies(cookieString) {
     return list;
 }
 
+const SESSION_URL='https://apps.ininsca.com/platform/api/v1/sessions';
 /**
- *
- * @param username
- * @param password
- * @param options
+ * Create a session, getting the session ID back
+ * @param {Object} [options]
+ * @param {request.jar} [options.jar] - A RequestJS jar to use
+ * @param {Iterable} [options.cookies] - key/value pairs ({name, value}) to construct a cookie jar out of
+ * @returns {Promise}
  */
-export function login(username, password, options) {
+function createSession(options = {}) {
+    let reqConfig = {
+        method: 'POST',
+        url: SESSION_URL,
+        body: {minutesToLive: 1440},
+        json: true
+    };
+
+    if(options.jar) {
+        reqConfig.jar = options.jar;
+    }
+
+    if(options.cookies) {
+        let j = request.jar();
+
+        _.forEach(options.cookies, cookie => {
+            j.setCookie(request.cookie(`${cookie.name}=${cookie.value}`), SESSION_URL);
+        });
+
+        reqConfig.jar = j;
+    }
+
+    return request(reqConfig)
+        .then(([inc, body]) => {
+            return Promise.resolve(body);
+        });
+}
+
+/**
+ * Supply credentials to get auth tokens back
+ * @param {String} username
+ * @param {String} password
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
+export function login(username, password, options = {}) {
     return request({
         method: 'POST',
         url: 'https://apps.ininsca.com/platform/api/v1/login',
@@ -62,20 +99,12 @@ export function login(username, password, options) {
             let j = request.jar();
             j.setCookie(request.cookie(`ININ-Auth-Api=${authSession}`), 'https://apps.ininsca.com/platform/api/v1/sessions');
 
-            return request({
-                method: 'POST',
-                url: 'https://apps.ininsca.com/platform/api/v1/sessions',
-                body: {minutesToLive: 1440},
-                json: true,
-                jar: j
-            })
-                .then(([inc, body]) => {
-                    //console.log('===' + inc.statusCode + '===');
-                    //console.log(inc.headers);
-                    //console.log(body);
+            configure({jar: j});
 
-                    config.jar = j;
-                    config.headers['ININ-Session'] = body.id;
+            // request should have our new cookie jar
+            return createSession()
+                .then(body => {
+                    configure({headers: {'ININ-Session': body.id}});
 
                     return Promise.resolve(config);
                 });
