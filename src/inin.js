@@ -77,7 +77,7 @@ function createSession(options = {}) {
             log.debug('===' + inc.statusCode + '===');
             log.debug(inc.headers);
             log.debug(body);
-            return Promise.resolve(body);
+            return body;
         });
 }
 
@@ -118,7 +118,7 @@ export function login(username, password, options = {}) {
                 .then(body => {
                     configure({headers: {'ININ-Session': body.id}});
 
-                    return Promise.resolve(config);
+                    return config;
                 });
         });
 }
@@ -126,24 +126,46 @@ export function login(username, password, options = {}) {
 /**
  *
  */
-export function createUser() {
-
-}
-
-/**
- * Set a role of a given user
- * @param userId
- * @param roleId
- */
-function setRole(userId, roleId) {
+export function createUser({email, name, phone, password}) {
     return request({
-        method: 'PUT',
-        url: `https://apps.ininsca.com/platform/api/v1/authorization/users/${userId}/roles`,
-        body: [roleId],
+        method: 'POST',
+        url: 'https://apps.ininsca.com/platform/api/v1/users',
+        body: {
+            'username': email,
+            'email': email,
+            'name': name,
+            'displayName': name,
+            'phoneNumber': phone,
+            'requestedStatus': 'UserStatus',
+            'voicemailEnabled': true,
+            'department': 'Hackathon Hackers',
+            'title': 'Hackathon Hacker',
+            'password': password
+        },
         json: true
     })
         .then(([inc, body]) => {
-            return Promise.resolve(body);
+            log.debug('===' + inc.statusCode + '===');
+            log.debug(inc.headers);
+
+            return body;
+        });
+}
+
+/**
+ * Set roles of a given user
+ * @param {String} userId
+ * @param {String[]} roles
+ */
+function setRoles(userId, roles) {
+    return request({
+        method: 'PUT',
+        url: `https://apps.ininsca.com/platform/api/v1/authorization/users/${userId}/roles`,
+        body: roles,
+        json: true
+    })
+        .then(([inc, body]) => {
+            return body;
         });
 }
 
