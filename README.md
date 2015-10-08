@@ -10,7 +10,12 @@
 var inin = require('inin');
 
 inin.login('user@example.com', 'password').then(function() {
-    inin.call('1317222222');
+    inin.createUser({
+        email: 'user@example.com',
+        name: 'User Name',
+        phone: '317222222',
+        password: 'password'
+    });
 });
 ```
 
