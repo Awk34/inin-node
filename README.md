@@ -13,7 +13,7 @@ inin.login('user@example.com', 'password').then(function() {
     inin.createUser({
         email: 'user@example.com',
         name: 'User Name',
-        phone: '317222222',
+        phone: '3172222222',
         password: 'password'
     });
 });
