@@ -134,7 +134,12 @@ export function login(username, password, options = {}) {
 }
 
 /**
- *
+ * Create a new PureCloud user
+ * @param email
+ * @param name
+ * @param phone
+ * @param password
+ * @returns {Promise}
  */
 export function createUser({email, name, phone, password}) {
     return request({
@@ -190,10 +195,10 @@ export function createPhone() {
 
 }
 
-export function getThing() {
-    return request('https://apps.ininsca.com/platform/api/v1/authorization/roles');
-}
-
+/**
+ *
+ * @param userId
+ */
 export function getUser(userId = 'me') {
     return request(`https://apps.ininsca.com/platform/api/v1/users/${userId}`);
 }
@@ -210,6 +215,8 @@ export default {
     VERSION,
     configure,
     login,
-    getThing,
+    createUser,
+    getUser,
+    setRoles,
     makeRequest
 }
