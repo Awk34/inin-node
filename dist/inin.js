@@ -13,7 +13,6 @@ exports.configure = configure;
 exports.login = login;
 exports.createUser = createUser;
 exports.createPhone = createPhone;
-exports.getThing = getThing;
 exports.getUser = getUser;
 exports.makeRequest = makeRequest;
 
@@ -110,24 +109,16 @@ function createSession() {
         var inc = _ref2[0];
         var body = _ref2[1];
 
+        if (inc.statusCode >= 300) return _Promise.reject(body);
+
         log.debug('===' + inc.statusCode + '===');
         log.debug(inc.headers);
         log.debug(body);
-        return _Promise.resolve(body);
+        return body;
     });
 }
 
-/**
- * Supply credentials to get auth tokens back
- * @param {String} username
- * @param {String} password
- * @param {Object} [options]
- * @returns {Promise}
- */
-
-function login(username, password) {
-    var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
+function createLogin(username, password) {
     return request({
         method: 'POST',
         url: 'https://apps.ininsca.com/platform/api/v1/login',
@@ -142,8 +133,11 @@ function login(username, password) {
         var inc = _ref32[0];
         var body = _ref32[1];
 
+        if (inc.statusCode >= 300) return _Promise.reject(body);
+
         log.debug('===' + inc.statusCode + '===');
         log.debug(inc.headers);
+
         var authSession = (0, _lodash2['default'])(inc.headers['set-cookie']).filter(function (cookieString) {
             return cookieString.indexOf('ININ-Auth-Api') >= 0;
         }).first();
@@ -151,44 +145,102 @@ function login(username, password) {
         authSession = _lodash2['default'].get(authSession, 'ININ-Auth-Api');
         //console.log(authSession);
 
+        return authSession;
+    });
+}
+
+/**
+ * Supply credentials to get auth tokens back
+ * @param {String} username
+ * @param {String} password
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
+
+function login(username, password) {
+    var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+    return createLogin(username, password).then(function (authSession) {
         var j = request.jar();
         j.setCookie(request.cookie('ININ-Auth-Api=' + authSession), 'https://apps.ininsca.com/platform/api/v1/sessions');
 
         configure({ jar: j });
 
         // request should have our new cookie jar
-        return createSession().then(function (body) {
-            configure({ headers: { 'ININ-Session': body.id } });
+        return createSession().then(function (session) {
+            configure({ headers: { 'ININ-Session': session.id } });
 
-            return _Promise.resolve(config);
+            return config;
         });
     });
 }
 
 /**
- *
+ * Create a new PureCloud user
+ * @param email
+ * @param name
+ * @param phone
+ * @param password
+ * @returns {Promise}
  */
 
-function createUser() {}
+function createUser(_ref4) {
+    var email = _ref4.email;
+    var name = _ref4.name;
+    var phone = _ref4.phone;
+    var password = _ref4.password;
+
+    return request({
+        method: 'POST',
+        url: 'https://apps.ininsca.com/platform/api/v1/users',
+        body: {
+            'username': email,
+            'email': email,
+            'name': name,
+            'displayName': name,
+            'phoneNumber': phone,
+            'requestedStatus': 'UserStatus',
+            'voicemailEnabled': true,
+            'department': 'Hackathon Hackers',
+            'title': 'Hackathon Hacker',
+            'password': password
+        },
+        json: true
+    }).then(function (_ref5) {
+        var _ref52 = _slicedToArray(_ref5, 2);
+
+        var inc = _ref52[0];
+        var body = _ref52[1];
+
+        if (inc.statusCode >= 300) return _Promise.reject(body);
+
+        log.debug('===' + inc.statusCode + '===');
+        log.debug(inc.headers);
+
+        return body;
+    });
+}
 
 /**
- * Set a role of a given user
- * @param userId
- * @param roleId
+ * Set roles of a given user
+ * @param {String} userId
+ * @param {String[]} roles
  */
-function setRole(userId, roleId) {
+function setRoles(userId, roles) {
     return request({
         method: 'PUT',
         url: 'https://apps.ininsca.com/platform/api/v1/authorization/users/' + userId + '/roles',
-        body: [roleId],
+        body: roles,
         json: true
-    }).then(function (_ref4) {
-        var _ref42 = _slicedToArray(_ref4, 2);
+    }).then(function (_ref6) {
+        var _ref62 = _slicedToArray(_ref6, 2);
 
-        var inc = _ref42[0];
-        var body = _ref42[1];
+        var inc = _ref62[0];
+        var body = _ref62[1];
 
-        return _Promise.resolve(body);
+        if (inc.statusCode >= 300) return _Promise.reject(body);
+
+        return body;
     });
 }
 
@@ -198,9 +250,10 @@ function setRole(userId, roleId) {
 
 function createPhone() {}
 
-function getThing() {
-    return request('https://apps.ininsca.com/platform/api/v1/authorization/roles');
-}
+/**
+ *
+ * @param userId
+ */
 
 function getUser() {
     var userId = arguments.length <= 0 || arguments[0] === undefined ? 'me' : arguments[0];
@@ -223,6 +276,8 @@ exports['default'] = {
     VERSION: VERSION,
     configure: configure,
     login: login,
-    getThing: getThing,
+    createUser: createUser,
+    getUser: getUser,
+    setRoles: setRoles,
     makeRequest: makeRequest
 };
