@@ -81,14 +81,7 @@ function createSession(options = {}) {
         });
 }
 
-/**
- * Supply credentials to get auth tokens back
- * @param {String} username
- * @param {String} password
- * @param {Object} [options]
- * @returns {Promise}
- */
-export function login(username, password, options = {}) {
+function createLogin(username, password) {
     return request({
         method: 'POST',
         url: 'https://apps.ininsca.com/platform/api/v1/login',
@@ -97,30 +90,45 @@ export function login(username, password, options = {}) {
             password: password
         },
         json: true
-    })
-        .then(([inc, body]) => {
-            log.debug('===' + inc.statusCode + '===');
-            log.debug(inc.headers);
-            let authSession = _(inc.headers['set-cookie'])
-                .filter(cookieString => cookieString.indexOf('ININ-Auth-Api') >= 0)
-                .first();
-            authSession = parseCookies(authSession);
-            authSession = _.get(authSession, 'ININ-Auth-Api');
-            //console.log(authSession);
+    }).then(([inc, body]) => {
+        if(inc.statusCode >= 300) return Promise.reject(body);
 
-            let j = request.jar();
-            j.setCookie(request.cookie(`ININ-Auth-Api=${authSession}`), 'https://apps.ininsca.com/platform/api/v1/sessions');
+        log.debug('===' + inc.statusCode + '===');
+        log.debug(inc.headers);
 
-            configure({jar: j});
+        let authSession = _(inc.headers['set-cookie'])
+            .filter(cookieString => cookieString.indexOf('ININ-Auth-Api') >= 0)
+            .first();
+        authSession = parseCookies(authSession);
+        authSession = _.get(authSession, 'ININ-Auth-Api');
+        //console.log(authSession);
 
-            // request should have our new cookie jar
-            return createSession()
-                .then(body => {
-                    configure({headers: {'ININ-Session': body.id}});
+        return authSession;
+    });
+}
 
-                    return config;
-                });
-        });
+/**
+ * Supply credentials to get auth tokens back
+ * @param {String} username
+ * @param {String} password
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
+export function login(username, password, options = {}) {
+    return createLogin(username, password).then(authSession => {
+        let j = request.jar();
+        j.setCookie(request.cookie(`ININ-Auth-Api=${authSession}`), 'https://apps.ininsca.com/platform/api/v1/sessions');
+
+        configure({jar: j});
+
+        // request should have our new cookie jar
+        return createSession()
+            .then(session => {
+                configure({headers: {'ININ-Session': session.id}});
+
+                return config;
+            });
+    });
 }
 
 /**
