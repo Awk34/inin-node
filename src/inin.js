@@ -74,6 +74,8 @@ function createSession(options = {}) {
 
     return request(reqConfig)
         .then(([inc, body]) => {
+            if(inc.statusCode >= 300) return Promise.reject(body);
+
             log.debug('===' + inc.statusCode + '===');
             log.debug(inc.headers);
             log.debug(body);
@@ -153,6 +155,8 @@ export function createUser({email, name, phone, password}) {
         json: true
     })
         .then(([inc, body]) => {
+            if(inc.statusCode >= 300) return Promise.reject(body);
+
             log.debug('===' + inc.statusCode + '===');
             log.debug(inc.headers);
 
@@ -173,6 +177,8 @@ function setRoles(userId, roles) {
         json: true
     })
         .then(([inc, body]) => {
+            if(inc.statusCode >= 300) return Promise.reject(body);
+
             return body;
         });
 }
